@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <h2>Edit your liting below</h2>
+    <form action="{% url 'edit_listing' listing.id %}" method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
+        {{form.media}}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit"> Update </button>
+    </form>
+
+{% endblock %}

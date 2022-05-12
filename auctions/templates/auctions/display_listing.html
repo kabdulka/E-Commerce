@@ -1,0 +1,107 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+<h2>Welcome to the listing page</h2>
+
+<!-- <img class="listing-image" src="{{listing.imageUrl}}" alt="" > -->
+{% if listing.image %}
+    <!-- {{listing.image.url}} -->
+    <img class="listing-image" src="{{listing.image.url}}" alt="" >
+{% endif %}
+<h4>{{listing.listingTitle}}</h4>
+<h4> About the listing: {{listing.description}}</h4>
+<h4> This listing has a bid of: {{listing.currentBid}}</h4>
+<h4> The category of this listing: {{listing.category.categoryText}} </h4>
+<!-- <h3>{{listing.isActive}}</h3> -->
+
+{% if isOwner %}
+<!-- Should also check to see if the the listing is no longer active -->
+    <h2>You're the owner of this listing</h2>
+    <br><br>
+    <a class="alert alert-danger" id="close-listing" href="{% url 'close_listing' listing.id %}"> Close Listing </a>
+    <br><br><br>
+    <a class="btn btn-primary" href="{% url 'edit_listing' listing.id %}"> Update </a>
+{% else %}
+    
+    <!-- <h2>You're not the Owner</h2> -->
+
+    <br>
+    {% if listing.isActive %}
+        <h2>Place a bid</h2>
+        <form action="{% url 'submit_bid' listing.id %}" method="post">
+            {% csrf_token %}
+            <label for="bidId" style="font-weight: bold;"> Ener a Bid greater than {{listing.currentBid}} </label> <br>
+            <input type="number" name="bid" step="0.01" min="0" id="bidId" placeholder="Enter bid"> <br>
+            <br>
+            <button type="subnit" class="btn btn-success">Place Bid</button>
+        </form>
+    {% endif %}
+
+    {% if bidPlaced == False %}
+        <div style="margin-top:10px;" class="alert alert-danger" role="alert">
+            {{message}}
+        </div>
+    <br>
+    {% endif %}
+    <br>
+    {% if bidSuccessful == True %}
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>
+    {% endif %}
+    {% if bidSuccessful == False %}
+        <div class="alert alert-danger" role="alert">
+            {{message}}
+        </div>
+    {% endif %}
+{% endif %} 
+<!-- End if/else for is owner -->
+
+<!-- if you're not the owner and the listing is closed -->
+{% if not listing.isActive and user == listing.bid.owner %}
+    <p></p>
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Contradulations! You've won the auction!</h4>
+        <p> An email will be sent to you with further instructions!
+        </p>
+        <hr>
+        <p class="mb-0"></p>
+    </div>
+{% endif %}
+
+
+<br>
+<br>
+<p>Listing owner</p>
+{{listing.listingOwner}}
+<p>bid owner</p>
+{{listing.bid.owner}}
+<br>
+
+<div style="padding: 1%;">
+    <form action="{% url 'add_comment' listing.id %}" method="post">
+        {% csrf_token %}
+        <div style="margin-top: 40px;" >
+            <label for="commentId" style="font-weight: bold;"> Comment (optional) </label> <br>
+            <textarea type="text" name="comment" id="commentId" placeholder="Enter your comment here" rows="5" cols="50"> </textarea>
+            <br>
+            <button class="btn btn-primary" type="submit"> Enter comment </button>
+            <br>
+        </div>
+    </form>
+    <div style="margin-top: 20px;">
+        {% for  comment in comments %}
+            <div class="card">
+                <div class="card-header">
+                    Comment by: {{comment.owner}}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{comment.content}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

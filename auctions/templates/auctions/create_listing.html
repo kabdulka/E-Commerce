@@ -1,0 +1,61 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <h2>Create your listing here</h2>
+
+   
+    <form action="{% url 'create_listing' %}" method="post">
+        {% csrf_token %}
+        <label for="listingId" style="font-weight: bold;"> Title </label><br>
+        <input type="text" name="listing_title" id="listingId" placeholder="Enter your listing title here"><br>
+        
+        <br>
+        <label for="bidId" style="font-weight: bold;"> Bid </label> <br>
+        <input type="number" name="bid" step="0.01" min="0" id="bidId" placeholder="Enter Starting bid"> <br>
+        <br>
+
+        <!-- <div id="Category" class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Category
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#category">Technology</a>
+              <a class="dropdown-item" href="#">Books</a>
+              <a class="dropdown-item" href="#">Games</a>
+              <a class="dropdown-item" href="#">Furnature</a>
+            </div>
+        </div> -->
+        <label for="categoryId" style="font-weight: bold;"> Category </label> <br>
+        <select id="categoryId" name="category" class="form-select" aria-label="Default select example">
+            <option value="Other" selected> Other </option>
+            <option value="Technology">Technology</option>
+            <option value="Books">Books</option>
+            <option value="Sports">Sports</option>
+            <option value="Games">Games</option>
+            <option value="Movies">Movies</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <br>
+        <br>
+        <label for="descriotionId" style="font-weight: bold;"> Description (optional) </label> <br>
+        <textarea type="text" name="description" id="descriotionId" placeholder="Enter a description here" rows="5" cols="50"> </textarea>
+       
+        <div class="form-group">
+            <label for="imgId">Image URL</label>
+            <input type="text" name="image_url" class="form-control" id="imageId">
+            <!-- <input type="file" id="imgId" name="imgage_url" > -->
+        </div>
+
+        <br>
+        <button class="btn btn-primary" type="submit"> Place Bid </button>
+        <br>
+    </form>
+    <!-- <h2>Or Click below to upload your file</h2> -->
+  
+{% endblock %}
+
+<!--   <label for="fname">First name:</label><br>
+  <input type="text" id="fname" name="fname" value="John"><br>
+  <label for="lname">Last name:</label><br>
+  <input type="text" id="lname" name="lname" value="Doe"> -->

@@ -1,0 +1,30 @@
+body {
+    padding: 10px;
+ 
+    background-color: rgb(231, 248, 246);
+}
+
+.listing-image {
+    width: 400px;
+    height: 300px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    /* background-color: #2196F3; */
+    padding: 10px;
+  }
+  .grid-item {
+    /* max-width: 500px; */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    /* margin-bottom: 10px; */
+    font-size: 30px;
+    text-align: center;
+  }
+
+/* .display_img {
+    height: 500px;
+    width: 500px;
+} */

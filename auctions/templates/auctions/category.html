@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+<h2>Categories</h2>
+
+<form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {% for category in categories %}
+
+        <button name="category" value="{{category.id}}" class="btn btn-primary" type="submit"> {{category.categoryText}} </button>
+
+    {% endfor %}
+</form>
+
+{% endblock %}
