@@ -1,8 +1,36 @@
 body {
-    padding: 10px;
- 
+    padding: 25px;
+    position: relative;
     background-color: rgb(231, 248, 246);
+     
 }
+/* Delete after */
+body::before{
+  background-image: url("https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg?cs=srgb&dl=pexels-pixabay-531880.jpg&fm=jpg");
+  background-size: cover;
+  position: absolute;
+  opacity: 0.5;
+}
+/* .hero {
+  position: relative; 
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero::before {    
+    content: "";
+    background-image: url('https://placekitten.com/1200/800');
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.75;
+} */
 
 .listing-image {
     width: 400px;
@@ -17,7 +45,7 @@ body {
   }
   .grid-item {
     /* max-width: 500px; */
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(241, 227, 227, 0.8);
     padding: 20px;
     /* margin-bottom: 10px; */
     font-size: 30px;

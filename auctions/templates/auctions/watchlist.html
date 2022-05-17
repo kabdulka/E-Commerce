@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+<h2>Watchlist</h2>
+
+<h1>TODO</h1>
+<div class="grid-container">
+       
+    <!-- <ul> -->
+        {% for listing in watchlist %}
+            <div class="grid-item"> 
+            <!-- <li> -->
+                <a href="{% url 'view_listing' listing.id %}">
+                    <img class="listing-image" src="{{listing.imageUrl}}" alt="">
+                    {% if listing.image %}
+                        <!-- {{listing.image.url}} -->
+                        <img class="listing-image" src="{{listing.image.url}}" alt="" >
+                    {% endif %}
+                   
+                <p>{{listing.description }} </p> 
+                <p>{{listing.startingBid}}</p>   
+                <p>{{listing.id}} </p>    
+                <p>{{listing.isActive}} </p>  
+                </a>  
+            </div>
+        {% endfor %}
+              
+</div>
+{% endblock %}
+
+
+
+

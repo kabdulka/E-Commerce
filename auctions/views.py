@@ -165,12 +165,22 @@ def success(request):
 
 def view_listing(request, listing_id):
     ## check if user is logged in
+    user = request.user
+    # isWatchlist = False
     listing = Listing.objects.get(pk=listing_id)
     comments = Comment.objects.all().filter(listing=listing)
+    # listingInWatchLst = Listing.objects.filter(watchlist__id=listing_id)
+    if user in listing.watchlist.all():
+        isWatchlist = True
+    # test = listing.watchlist.all()
+    # test.objects.get(pk=listing_id)
+    print ()
     # get all bids for this listing
     # bids = Bid.objects.all().filter(listing=listing)
     # find the highest Bid
-
+    isInWatchlist = user in listing.watchlist.all()
+    print("Iswatchlist")
+    print(isInWatchlist)
     # Is the person viewing the listing the owner 
     if request.user == listing.listingOwner:
         isOwner = True
@@ -179,7 +189,8 @@ def view_listing(request, listing_id):
     return render(request, "auctions/display_listing.html", {
         "listing": listing,
         "isOwner": isOwner,
-        "comments": comments
+        "comments": comments,
+        "isInWatchlist": isInWatchlist
     })
 
 def close_listing(request, listing_id):
@@ -223,24 +234,33 @@ def view_categories(request):
 def submit_bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     # myBid = Bid.objects.get(bid=listing.currentBid)
+    user = request.user
     bidPlaced = True
     bidSuccessful =  True
+    isInWatchlist = False
+    ## Make sure that when the request is made to go to the template file
+    ## we still see whether or not the listing is in the watchlist
+    if user in listing.watchlist.all():
+        print("Are we here?")
+        print(user in listing.watchlist.all())
+        isInWatchlist = True
+
     if request.method == "POST":
         
         newBid = request.POST['bid']
         if newBid == '' or newBid == None:
             bidPlaced = False
-            # return HttpResponseRedirect(reverse("view_listing", args=(listing_id,)))
             return render(request,"auctions/display_listing.html",{
                 "listing":listing,
                 "message":"Please submit a valid bid that is at least larger than the latest bid!",
                 "bidPlaced": bidPlaced,
+                "isInWatchlist": True
             })
         print(float(newBid))
         print(listing.currentBid)
         # the new bid is larger than the previus bid
         if float(newBid) > listing.currentBid:
-            user = request.user
+            # user = request.user
             updatedBid = Bid(bid=newBid, owner=user)
             updatedBid.save()
             listing.bid = updatedBid
@@ -251,6 +271,7 @@ def submit_bid(request, listing_id):
                 "listing":listing,
                 "message":"You've successfully submitted your bid!",
                 "bidSuccessful": bidSuccessful,
+                "isInWatchlist": isInWatchlist
             })
         else:
             bidSuccessful = False
@@ -260,6 +281,7 @@ def submit_bid(request, listing_id):
                 "listing":listing,
                 "message":"The bid you've placed is not larger than the latest bid.",
                 "bidSuccessful": bidSuccessful,
+                "isInWatchlist": isInWatchlist
             })
             return HttpResponseRedirect(reverse("view_listing", args=(listing_id,)))
 
@@ -285,20 +307,12 @@ def edit_listing(request, listing_id):
             pass
     else:
         # Method is GET
-    #     print("get method called")
-    #     form.fields['listingTitle'].initial = listing.listingTitle
-    #     form.fields['description'].initial = listing.description
-    #     form.fields['currentBid'].initial = listing.currentBid
-    #     # form.fields['currentBid'].widget = forms.HiddenInput()
-    #     form.fields['category'].initial = listing.category
-    #      data = {'pres_clinic' : 'value', 'bcg_scar' : 'value', 'mantoux_register' : 'value'}
-        # print("We're here")
         data = {'listingTitle': listing.listingTitle, 
                 'description': listing.description,
                 'currentBid': listing.currentBid,
                 'category': listing.category
         }
-           #     print("get method called")
+        #     print("get method called")
         # form.fields['listingTitle'].initial = "TEST"
         # print("listingTitle:")
         # print(listing.listingTitle)
@@ -312,38 +326,24 @@ def edit_listing(request, listing_id):
             "form": form,
             "listing": listing
         })
-    ### TEST END
 
-
-    # if request.method == "GET":
-    #     print("get method called")
-    #     form.fields['listingTitle'].initial = listing.listingTitle
-    #     form.fields['description'].initial = listing.description
-    #     form.fields['currentBid'].initial = listing.currentBid
-    #     # form.fields['currentBid'].widget = forms.HiddenInput()
-    #     form.fields['category'].initial = listing.category
-    #     ## TODO ## 
-    #     # change listing image
-    #     # form.fields['content'].initial = content
-    #     return render(request, "auctions/edit_listing.html", {
-    #         "form": form,
-    #         "listing": listing
-    #     })
-    # # else:
-    #     ## Method is post
-    # if request.method == "POST":
-    #     print("Post Method called")
-    #     if form.is_valid():
-    #         print("Post Method called and form is valid")
-    #         listing = form.save()
-    #         listing.save()
-    #         print("Category Text")
-    #         print(listing.category.categoryText)
-    #         return HttpResponseRedirect(reverse("view_listing", args=(listing.id,)))
+def view_watchlist(request):
+    ## filter listings based on watchlist listings that belong to a user
+    user = request.user
+    watchlist = Listing.objects.filter(watchlist=user)
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": watchlist
+    })
     
-    #     print("HEREERERE")
-
-    # return render(request, "auctions/edit_listing.html", {
-    #     "form": form,
-    #     "listing": listing
-    # })
+def add_to_watchlist(request, listing_id):
+    # Filter based on listings that do not belong to the user logged in
+    user = request.user
+    listing = Listing.objects.get(pk=listing_id)
+    listing.watchlist.add(user)
+    # listing.save()
+    return render(request, "auctions/display_listing.html", {
+        "listing": listing,
+        "added_to_watchlist": True
+    })
+    # return HttpResponseRedirect(reverse("view_listing",args=(listing_id,)))
+        

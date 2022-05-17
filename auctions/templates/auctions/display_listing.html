@@ -13,48 +13,71 @@
 <h4> This listing has a bid of: {{listing.currentBid}}</h4>
 <h4> The category of this listing: {{listing.category.categoryText}} </h4>
 <!-- <h3>{{listing.isActive}}</h3> -->
+{% if user.is_authenticated %}
+    {% if isOwner %}
+    <!-- Should also check to see if the the listing is no longer active -->
+        <h2>You're the owner of this listing</h2>
+        <br><br>
+        <a class="alert alert-danger" id="close-listing" href="{% url 'close_listing' listing.id %}"> Close Listing </a>
+        <br><br><br>
+        <a class="btn btn-primary" href="{% url 'edit_listing' listing.id %}"> Update </a>
+    {% else %}
+        
+        <!-- <h2>You're not the Owner</h2> -->
 
-{% if isOwner %}
-<!-- Should also check to see if the the listing is no longer active -->
-    <h2>You're the owner of this listing</h2>
-    <br><br>
-    <a class="alert alert-danger" id="close-listing" href="{% url 'close_listing' listing.id %}"> Close Listing </a>
-    <br><br><br>
-    <a class="btn btn-primary" href="{% url 'edit_listing' listing.id %}"> Update </a>
-{% else %}
+        <br>
+        {% if listing.isActive %}
+            <h2>Place a bid</h2>
+            <form action="{% url 'submit_bid' listing.id %}" method="post">
+                {% csrf_token %}
+                <label for="bidId" style="font-weight: bold;"> Ener a Bid greater than {{listing.currentBid}} </label> <br>
+                <input type="number" name="bid" step="0.01" min="0" id="bidId" placeholder="Enter bid"> <br>
+                <br>
+                <button type="subnit" class="btn btn-success">Place Bid</button>
+            </form>
+            <!-- Remove from watch list if this listing is in the user's watchlist -->
+            <p> {{listing.watchlist}} </p> 
+            <p> {{user}} </p> 
+            {% if isInWatchlist %}
+                <button type="button" class="btn btn-danger">Remove from Watchlist</button>
+            {% else %}
+                <a class="btn btn-success" href="{% url 'add_to_watchlist' listing.id %}">
+                Add to Watchlist
+                </a>
+            {% endif %}
+            {% if added_to_watchlist == True %}
+                <div class="alert alert-success" role="alert">
+                    Added to wachlist
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if bidPlaced == False %}
+            <div style="margin-top:10px;" class="alert alert-danger" role="alert">
+                {{message}}
+            </div>
+        <br>
+        {% endif %}
+        <br>
+        {% if bidSuccessful == True %}
+            <div class="alert alert-success" role="alert">
+                {{message}}
+            </div>
+        {% endif %}
+        {% if bidSuccessful == False %}
+            <div class="alert alert-danger" role="alert">
+                {{message}}
+            </div>
+        {% endif %}
+    {% endif %} 
     
-    <!-- <h2>You're not the Owner</h2> -->
+{% else %}
+    <h4>login to plave a bid</h4>
+    <h4>
+        <a href="{% url 'login' %}"> Login </a>
+    </h4>
+{% endif %}
 
-    <br>
-    {% if listing.isActive %}
-        <h2>Place a bid</h2>
-        <form action="{% url 'submit_bid' listing.id %}" method="post">
-            {% csrf_token %}
-            <label for="bidId" style="font-weight: bold;"> Ener a Bid greater than {{listing.currentBid}} </label> <br>
-            <input type="number" name="bid" step="0.01" min="0" id="bidId" placeholder="Enter bid"> <br>
-            <br>
-            <button type="subnit" class="btn btn-success">Place Bid</button>
-        </form>
-    {% endif %}
-
-    {% if bidPlaced == False %}
-        <div style="margin-top:10px;" class="alert alert-danger" role="alert">
-            {{message}}
-        </div>
-    <br>
-    {% endif %}
-    <br>
-    {% if bidSuccessful == True %}
-        <div class="alert alert-success" role="alert">
-            {{message}}
-        </div>
-    {% endif %}
-    {% if bidSuccessful == False %}
-        <div class="alert alert-danger" role="alert">
-            {{message}}
-        </div>
-    {% endif %}
-{% endif %} 
 <!-- End if/else for is owner -->
 
 <!-- if you're not the owner and the listing is closed -->
