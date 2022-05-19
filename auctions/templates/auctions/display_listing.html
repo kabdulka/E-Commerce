@@ -38,18 +38,16 @@
             <!-- Remove from watch list if this listing is in the user's watchlist -->
             <p> {{listing.watchlist}} </p> 
             <p> {{user}} </p> 
+            <p>{{ isInWatchlist}}</p>
+            <br>
             {% if isInWatchlist %}
-                <button type="button" class="btn btn-danger">Remove from Watchlist</button>
+                <a href="{% url 'remove_from_watchlist' listing.id %}" type="button" class="btn btn-danger">Remove from Watchlist</a>
             {% else %}
-                <a class="btn btn-success" href="{% url 'add_to_watchlist' listing.id %}">
+                <a class="btn btn-success" href="{% url 'add_to_watchlist' listing.id %}" type="button">
                 Add to Watchlist
                 </a>
             {% endif %}
-            {% if added_to_watchlist == True %}
-                <div class="alert alert-success" role="alert">
-                    Added to wachlist
-                </div>
-            {% endif %}
+   
         {% endif %}
 
         {% if bidPlaced == False %}

@@ -7,7 +7,6 @@ from django.db.models import Max
 from .forms import *
 from .models import User, Listing, Comment, Bid, Category
 
-
 def index(request):
     active_listings = Listing.objects.filter(isActive=True)
     ## user has clicked on a category
@@ -170,8 +169,8 @@ def view_listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     comments = Comment.objects.all().filter(listing=listing)
     # listingInWatchLst = Listing.objects.filter(watchlist__id=listing_id)
-    if user in listing.watchlist.all():
-        isWatchlist = True
+    # if user in listing.watchlist.all():
+    #     isWatchlist = True
     # test = listing.watchlist.all()
     # test.objects.get(pk=listing_id)
     print ()
@@ -340,10 +339,24 @@ def add_to_watchlist(request, listing_id):
     user = request.user
     listing = Listing.objects.get(pk=listing_id)
     listing.watchlist.add(user)
+    added_to_watchlist = user in listing.watchlist.all()
     # listing.save()
-    return render(request, "auctions/display_listing.html", {
-        "listing": listing,
-        "added_to_watchlist": True
-    })
-    # return HttpResponseRedirect(reverse("view_listing",args=(listing_id,)))
+    # return render(request, "auctions/display_listing.html", {
+    #     "listing": listing,
+    #     "added_to_watchlist": added_to_watchlist
+    # })
+    return HttpResponseRedirect(reverse("view_listing",args=(listing_id,)))
         
+def remove_from_watchlist(request, listing_id):
+    user = request.user
+    listing = Listing.objects.get(pk=listing_id)
+    listing.watchlist.remove(user)
+
+    removed_from_watchlist = not(user in listing.watchlist.all())
+    print("removed from watchlist")
+    print(removed_from_watchlist)
+    # return render(request, "auctions/display_listing.html", {
+    #     "listing": listing,
+    #     "removed_from_watchlist": removed_from_watchlist
+    # })
+    return HttpResponseRedirect(reverse("view_listing",args=(listing_id,)))
